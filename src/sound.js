@@ -1,4 +1,4 @@
-// Interface sounds, made in code: a tick on hover, tones on clicks, a blip per HUD chat line.
+// Interface sounds from four short files: a tick on hover, clicks, a blip per HUD chat line, a glitch.
 // On by default; the speaker button mutes them, and the choice is remembered.
 (() => {
   const btn = document.querySelector('.sound');
@@ -6,31 +6,34 @@
   try { on = localStorage.getItem('sound') !== 'off'; } catch (e) { /* storage blocked: stay on */ }
   let ac = null; // made on the first click or key press, since browsers block audio before that
 
-  // One note: the pitch glides from f0 to f1 while the volume decays over `dur` seconds.
-  function tone(f0, f1, dur, vol, type = 'triangle', delay = 0) {
-    if (!on || !ac) return;
-    const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(f0, t);
-    o.frequency.exponentialRampToValueAtTime(f1, t + dur);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol, t + 0.004);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(ac.destination);
-    o.start(t);
-    o.stop(t + dur + 0.02);
-  }
-  // Holographic panel sounds: high, glassy pings that sweep in pitch, kept very short.
-  const play = {
-    hover: () => tone(2400, 3200, 0.018, 0.02, 'sine'),
-    click: () => { tone(1800, 2600, 0.025, 0.02, 'square'); tone(3200, 3200, 0.06, 0.03, 'sine', 0.01); },
-    next: () => { tone(1200, 2400, 0.04, 0.05, 'sine'); tone(2400, 3600, 0.07, 0.045, 'sine', 0.045); },
-    back: () => { tone(2400, 1200, 0.04, 0.05, 'sine'); tone(1800, 900, 0.07, 0.045, 'sine', 0.045); },
-    // A rising charge, then a chord that shimmers as each note drifts slightly sharp.
-    lock: () => { tone(300, 2400, 0.18, 0.05); [1568, 2093, 2637].forEach((f, i) => tone(f, f * 1.003, 0.6, 0.03, 'sine', 0.17 + i * 0.03)); },
-    blip: () => { tone(2600, 2600, 0.03, 0.02, 'sine'); tone(3400, 3400, 0.03, 0.02, 'sine', 0.045); }, // a two-pip readout
+  // Each sound: its file, its volume, where the sound starts in the file (skipping silence at the
+  // front) and a delay in seconds (the glitch waits for its 0.15 s animation delay).
+  const sounds = {
+    hover: ['ui-hover.mp3', 0.3, 0.02, 0],
+    click: ['small-click.mp3', 0.18, 0.24, 0],
+    lock: ['big-click.mp3', 0.2, 0, 0],
+    blip: ['ui-hover.mp3', 0.15, 0.02, 0],
+    glitch: ['glitch-effect.m4a', 0.1, 0.05, 0.15],
   };
-  window.sound = play;
+  // Decoded at page load, so the first click has its sound ready; an offline context needs no click.
+  const buffers = {};
+  try {
+    const decoder = new OfflineAudioContext(2, 1, 48000);
+    new Set(Object.values(sounds).map((s) => s[0])).forEach((file) =>
+      fetch(`assets/sounds/${file}`).then((r) => r.arrayBuffer()).then((b) => decoder.decodeAudioData(b))
+        .then((buf) => { buffers[file] = buf; }, () => { /* that sound stays silent */ }));
+  } catch (e) { /* no Web Audio: no sound */ }
+
+  function play(name) {
+    const [file, vol, offset, delay] = sounds[name];
+    if (!on || !ac || !buffers[file]) return;
+    const src = ac.createBufferSource(), g = ac.createGain();
+    src.buffer = buffers[file];
+    g.gain.value = vol;
+    src.connect(g).connect(ac.destination);
+    src.start(ac.currentTime + delay, offset);
+  }
+  window.sound = Object.fromEntries(Object.keys(sounds).map((k) => [k, () => play(k)]));
 
   const wake = () => {
     if (!ac) { try { ac = new AudioContext(); } catch (e) { return; } }
@@ -45,15 +48,12 @@
     const el = target(e);
     if (e.pointerType !== 'mouse' || !el || el.contains(e.relatedTarget) || performance.now() - lastHover < 100) return;
     lastHover = performance.now();
-    play.hover();
+    play('hover');
   });
   document.addEventListener('click', (e) => {
     const el = target(e);
     if (!el) return;
-    if (el.matches('.lock .next')) play.lock();
-    else if (el.matches('.next, .page-next')) play.next();
-    else if (el.matches('.back')) play.back();
-    else play.click(); // the speaker button runs first, so turning sound on clicks and turning it off is silent
+    play(el.matches('.lock .next') ? 'lock' : 'click'); // the speaker button runs first, so turning sound on clicks and turning it off is silent
   });
 
   if (!btn) return;

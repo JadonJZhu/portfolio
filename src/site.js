@@ -147,6 +147,7 @@
     el.classList.remove('glitch');
     void el.offsetWidth; // a reflow, so adding the class again restarts the animation
     el.classList.add('glitch');
+    window.sound?.glitch();
     glitchTimer = setTimeout(() => glitch(el), 6000 + Math.random() * 4000);
   }
 

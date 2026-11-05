@@ -318,34 +318,42 @@ for (const [name, viewport] of Object.entries(sizes)) {
   await page.close();
 }
 
-// Sounds: none before the first click; then hover, next, LOCK IN and chat lines each play notes;
-// the speaker button mutes them, and the choice survives a reload
+// Sounds: none before the first click; then START, hover, LOCK IN, a chat line and the glitch each
+// play their file; the speaker button mutes them, and the choice survives a reload
 {
   const ctx = await browser.newContext({ viewport: sizes.desktop });
   await ctx.addInitScript(() => {
-    window.notes = 0;
-    const make = AudioContext.prototype.createOscillator;
-    AudioContext.prototype.createOscillator = function () { window.notes++; return make.call(this); };
+    // Each file is told apart by its length: big click 3.7 s, hover 1.2 s, small click 0.48 s, glitch about 0.4 s
+    window.played = [];
+    const start = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...a) {
+      const d = this.buffer.duration;
+      window.played.push(d > 3 ? 'big' : d > 1 ? 'hover' : Math.abs(d - 0.48) < 0.01 ? 'small' : 'glitch');
+      return start.apply(this, a);
+    };
   });
   const page = await ctx.newPage();
-  await page.goto(URL_); await ready(page);
-  const notes = () => page.evaluate(() => window.notes);
+  await page.goto(URL_); await ready(page); await page.waitForTimeout(500);
+  // The glitch repeats on its own timer, so each step looks only at the other sounds
+  const since = async (n) => (await page.evaluate(() => window.played)).slice(n).filter((s) => s !== 'glitch').join(' ');
+  const count = () => page.evaluate(() => window.played.length);
   await page.hover('#lobby .next'); await page.mouse.move(5, 500);
-  const before = await notes();
-  await page.click('#lobby .next'); const start = await notes();
+  const before = await since(0);
+  await page.click('#lobby .next'); const start = await since(0);
   await page.waitForTimeout(2500); await page.mouse.move(5, 500); await page.waitForTimeout(150);
-  const n0 = await notes(); await page.hover('.page-next'); const hover = (await notes()) - n0;
+  const glitch = (await page.evaluate(() => window.played)).includes('glitch');
+  const n0 = await count(); await page.hover('.page-next'); const hover = await since(n0);
   await page.click('.page-next'); await page.waitForTimeout(1500);
   await page.hover('#position .lock .next'); await page.waitForTimeout(150);
-  const n1 = await notes(); await page.click('#position .lock .next'); const lock = (await notes()) - n1;
+  const n1 = await count(); await page.click('#position .lock .next'); const lock = await since(n1);
   await page.evaluate(() => window.fly.go('why-riot', false)); await page.waitForTimeout(3500);
-  const n2 = await notes(); await page.waitForTimeout(3200); const chat = (await notes()) - n2;
-  await page.click('.sound'); const n3 = await notes();
+  const n2 = await count(); await page.waitForTimeout(3200); const chat = await since(n2);
+  await page.click('.sound'); const n3 = await count();
   await page.hover('.map-btn'); await page.click('.back'); await page.waitForTimeout(300);
-  const muted = (await notes()) - n3;
+  const muted = (await count()) - n3;
   await page.reload(); await ready(page);
   const pressed = await page.getAttribute('.sound', 'aria-pressed');
-  check('sounds: silent before the first click, then hover, next, LOCK IN, chat; mute holds across a reload', before === 0 && start === 2 && hover === 1 && lock === 4 && chat === 2 && muted === 0 && pressed === 'false', JSON.stringify({ before, start, hover, lock, chat, muted, pressed }));
+  check('sounds: silent before the first click, then START, glitch, hover, LOCK IN, chat; mute holds across a reload', before === '' && start === 'small' && glitch && hover === 'hover' && lock === 'big' && chat === 'hover' && muted === 0 && pressed === 'false', JSON.stringify({ before, start, glitch, hover, lock, chat, muted, pressed }));
   await ctx.close();
 }
 
