@@ -1,6 +1,6 @@
 # Portfolio
 
-Jadon Zhu's portfolio, which proposes a role at Riot Games. It plays like a match in a game client: a lobby, agent select, then a camera that flies over an original map to a short note on why Riot, a timeline of past work and three small projects.
+My visual, game-like portfolio proposing a "prototype engineer" role at Riot Games. 
 
 Live: https://jadonjzhu.github.io/portfolio/
 
