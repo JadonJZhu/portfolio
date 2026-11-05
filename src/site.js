@@ -165,6 +165,7 @@
     let n = 0;
     const beat = () => {
       beats[n++].classList.add('shown');
+      window.sound?.blip();
       if (n === beats.length) dots.classList.add('gone');
       else setTimeout(beat, 3000);
     };

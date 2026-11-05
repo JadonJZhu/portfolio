@@ -20,7 +20,10 @@
     <span class="now">Lobby</span>
   </div>
   <p class="brand">Visual Portfolio</p>
-  <button class="map-btn" type="button" aria-haspopup="dialog"><i class="ico i-map" aria-hidden="true"></i>Map</button>
+  <div class="tools">
+    <button class="sound" type="button" aria-label="Sound" aria-pressed="true" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z"/><path class="waves" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.5a6 6 0 0 1 0 9"/><path class="mute" d="M11 6l4 4M15 6l-4 4"/></svg></button>
+    <button class="map-btn" type="button" aria-haspopup="dialog"><i class="ico i-map" aria-hidden="true"></i>Map</button>
+  </div>
 </header>
 <main>
 
@@ -251,6 +254,7 @@
   <nav class="others" aria-label="Other screens"><a href="#lobby">Lobby</a><a href="#buy">Table of contents</a><a href="#close">Contact</a></nav>
 </dialog>
 <script src="vendor/gsap/gsap.min.js"></script>
+<script src="src/sound.js"></script>
 <script src="src/map-data.js"></script>
 <script src="src/site.js"></script>
 </body>

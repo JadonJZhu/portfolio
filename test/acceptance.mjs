@@ -28,7 +28,7 @@ const cardIds = [...section('timeline').matchAll(/<article class="card" id="([^"
 check('timeline holds the ten entries in order', cardIds.join() === entries.join(), cardIds.join());
 check('removed: title, blurb screen, abilities, health, rail, or scroll, ScrollTrigger', !/id="title"|id="blurb"|abilities|class="health|class="rail|or scroll|class="or"|ScrollTrigger/.test(html));
 const dash = new RegExp('[\\u2013\\u2014]|&[mn]dash;'); // written as escapes so this file passes its own check
-const sources = ['README.md', 'index.html','src/style.css', 'src/site.js', 'data/route.json', 'docs/design-plan.md', 'scripts/build-map.mjs', 'test/acceptance.mjs', 'test/shots.mjs'];
+const sources = ['README.md', 'index.html', 'src/sound.js', 'src/style.css', 'src/site.js', 'data/route.json', 'docs/design-plan.md', 'scripts/build-map.mjs', 'test/acceptance.mjs', 'test/shots.mjs'];
 check('no em or en dashes', sources.every((f) => !dash.test(readFileSync(f, 'utf8'))), sources.filter((f) => dash.test(readFileSync(f, 'utf8'))).join());
 const text = norm(html.replace(/<script[\s\S]*?<\/script>/g, ''));
 const banned = /claude|salary|12-week|holden|\$\d+\s*(\/|an?\s)hr/i;
@@ -318,6 +318,37 @@ for (const [name, viewport] of Object.entries(sizes)) {
   await page.close();
 }
 
+// Sounds: none before the first click; then hover, next, LOCK IN and chat lines each play notes;
+// the speaker button mutes them, and the choice survives a reload
+{
+  const ctx = await browser.newContext({ viewport: sizes.desktop });
+  await ctx.addInitScript(() => {
+    window.notes = 0;
+    const make = AudioContext.prototype.createOscillator;
+    AudioContext.prototype.createOscillator = function () { window.notes++; return make.call(this); };
+  });
+  const page = await ctx.newPage();
+  await page.goto(URL_); await ready(page);
+  const notes = () => page.evaluate(() => window.notes);
+  await page.hover('#lobby .next'); await page.mouse.move(5, 500);
+  const before = await notes();
+  await page.click('#lobby .next'); const start = await notes();
+  await page.waitForTimeout(2500); await page.mouse.move(5, 500); await page.waitForTimeout(150);
+  const n0 = await notes(); await page.hover('.page-next'); const hover = (await notes()) - n0;
+  await page.click('.page-next'); await page.waitForTimeout(1500);
+  await page.hover('#position .lock .next'); await page.waitForTimeout(150);
+  const n1 = await notes(); await page.click('#position .lock .next'); const lock = (await notes()) - n1;
+  await page.evaluate(() => window.fly.go('why-riot', false)); await page.waitForTimeout(3500);
+  const n2 = await notes(); await page.waitForTimeout(3200); const chat = (await notes()) - n2;
+  await page.click('.sound'); const n3 = await notes();
+  await page.hover('.map-btn'); await page.click('.back'); await page.waitForTimeout(300);
+  const muted = (await notes()) - n3;
+  await page.reload(); await ready(page);
+  const pressed = await page.getAttribute('.sound', 'aria-pressed');
+  check('sounds: silent before the first click, then hover, next, LOCK IN, chat; mute holds across a reload', before === 0 && start === 2 && hover === 1 && lock === 4 && chat === 1 && muted === 0 && pressed === 'false', JSON.stringify({ before, start, hover, lock, chat, muted, pressed }));
+  await ctx.close();
+}
+
 // Reduced motion and no JavaScript show all content as a plain page, with nothing moving
 const wanted = ['Visual Portfolio', 'juhdawn#tchno', 'Position Overview', 'Department TBD', "Hi, I'm Jadon", "I don't list an exact department", 'Emerald IV', 'X. William Yang Lab', 'Jamnesia', 'Silvus Technologies', 'Golotl', 'Starborne', 'See all my past games', 'LLM Autobattler', 'UCLA Health', 'Motorola Solutions', 'Counterfactual Simulation', 'GPA 3.9', 'Readability Grid', 'Playtest Triage', 'Callout Drill', 'July 2027', 'jadonjzhu@gmail.com', 'Resume (PDF)'];
 for (const [label, opts] of [['reduced motion', { reducedMotion: 'reduce' }], ['no JavaScript', { javaScriptEnabled: false }]]) {
@@ -331,11 +362,12 @@ for (const [label, opts] of [['reduced motion', { reducedMotion: 'reduce' }], ['
       fly: document.documentElement.classList.contains('fly'),
       sections: [...document.querySelectorAll('main > section')].filter((s) => s.getBoundingClientRect().height > 0 && getComputedStyle(s).visibility === 'visible').length,
       blurbs: [...document.querySelectorAll('.blurb')].filter((b) => b.getBoundingClientRect().height > 0 && getComputedStyle(b).visibility === 'visible').length,
-      chrome: getComputedStyle(document.querySelector('.bar')).display !== 'none' || document.querySelector('.map-dialog').open,
+      chrome: ['.where', '.map-btn'].some((s) => getComputedStyle(document.querySelector(s)).display !== 'none') || document.querySelector('.map-dialog').open,
+      speaker: getComputedStyle(document.querySelector('.sound')).display !== 'none',
       overflow: document.documentElement.scrollWidth > innerWidth,
       animations: document.getAnimations ? document.getAnimations().filter((a) => a.playState === 'running').length : 0,
     }));
-    check(`${label} ${name} plain page shows all content, no bar, nothing moving`, !missing.length && !r.fly && r.sections === screens.length && r.blurbs === 2 && !r.chrome && !r.overflow && !r.animations, missing.join(',') || JSON.stringify(r));
+    check(`${label} ${name} plain page shows all content, no bar, nothing moving, speaker button only with script`, !missing.length && !r.fly && r.sections === screens.length && r.blurbs === 2 && !r.chrome && !r.overflow && !r.animations && r.speaker === (opts.javaScriptEnabled !== false), missing.join(',') || JSON.stringify(r));
     await page.close();
   }
 }
