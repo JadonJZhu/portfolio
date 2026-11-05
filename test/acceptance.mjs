@@ -345,7 +345,7 @@ for (const [name, viewport] of Object.entries(sizes)) {
   const muted = (await notes()) - n3;
   await page.reload(); await ready(page);
   const pressed = await page.getAttribute('.sound', 'aria-pressed');
-  check('sounds: silent before the first click, then hover, next, LOCK IN, chat; mute holds across a reload', before === 0 && start === 2 && hover === 1 && lock === 4 && chat === 1 && muted === 0 && pressed === 'false', JSON.stringify({ before, start, hover, lock, chat, muted, pressed }));
+  check('sounds: silent before the first click, then hover, next, LOCK IN, chat; mute holds across a reload', before === 0 && start === 2 && hover === 1 && lock === 4 && chat === 2 && muted === 0 && pressed === 'false', JSON.stringify({ before, start, hover, lock, chat, muted, pressed }));
   await ctx.close();
 }
 

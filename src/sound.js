@@ -20,13 +20,15 @@
     o.start(t);
     o.stop(t + dur + 0.02);
   }
+  // Holographic panel sounds: high, glassy pings that sweep in pitch, kept very short.
   const play = {
-    hover: () => tone(1800, 1600, 0.03, 0.025, 'sine'),
-    click: () => tone(1100, 900, 0.05, 0.05),
-    next: () => { tone(660, 660, 0.06, 0.06); tone(990, 990, 0.09, 0.06, 'triangle', 0.05); },
-    back: () => { tone(660, 660, 0.06, 0.05); tone(440, 440, 0.09, 0.05, 'triangle', 0.05); },
-    lock: () => { tone(160, 50, 0.25, 0.12, 'sine'); [523, 659, 784].forEach((f) => tone(f, f, 0.45, 0.04, 'triangle', 0.03)); },
-    blip: () => tone(1250, 1500, 0.06, 0.03, 'sine'),
+    hover: () => tone(2400, 3200, 0.018, 0.02, 'sine'),
+    click: () => { tone(1800, 2600, 0.025, 0.02, 'square'); tone(3200, 3200, 0.06, 0.03, 'sine', 0.01); },
+    next: () => { tone(1200, 2400, 0.04, 0.05, 'sine'); tone(2400, 3600, 0.07, 0.045, 'sine', 0.045); },
+    back: () => { tone(2400, 1200, 0.04, 0.05, 'sine'); tone(1800, 900, 0.07, 0.045, 'sine', 0.045); },
+    // A rising charge, then a chord that shimmers as each note drifts slightly sharp.
+    lock: () => { tone(300, 2400, 0.18, 0.05); [1568, 2093, 2637].forEach((f, i) => tone(f, f * 1.003, 0.6, 0.03, 'sine', 0.17 + i * 0.03)); },
+    blip: () => { tone(2600, 2600, 0.03, 0.02, 'sine'); tone(3400, 3400, 0.03, 0.02, 'sine', 0.045); }, // a two-pip readout
   };
   window.sound = play;
 
