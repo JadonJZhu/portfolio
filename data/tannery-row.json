@@ -1,0 +1,30 @@
+{
+  "name": "Tannery Row",
+  "slug": "tannery-row",
+  "rooms": [
+    {"name":"Defender Spawn","kind":"spawn","rects":[[40,2,24,12]]},
+    {"name":"Attacker Spawn","kind":"spawn","rects":[[34,88,34,10]]},
+    {"name":"A Site","kind":"site","rects":[[10,14,24,8],[6,22,24,8],[14,30,14,4]]},
+    {"name":"Heaven","kind":"room","rects":[[14,6,18,8]]},
+    {"name":"Hell","kind":"room","rects":[[4,12,6,10]]},
+    {"name":"Stairs","kind":"room","rects":[[32,6,8,6]]},
+    {"name":"CT","kind":"room","rects":[[34,16,10,6],[40,14,4,2]]},
+    {"name":"A Short","kind":"room","rects":[[30,25,14,5]]},
+    {"name":"A Main","kind":"room","rects":[[5,46,12,22],[5,40,20,6],[20,34,5,6]]},
+    {"name":"Cubby","kind":"room","rects":[[25,40,8,6]]},
+    {"name":"A Lobby","kind":"room","rects":[[8,68,24,12],[26,80,8,12]]},
+    {"name":"Link","kind":"room","rects":[[32,70,8,4]]},
+    {"name":"Mid Top","kind":"room","rects":[[44,24,14,14],[46,14,6,10]]},
+    {"name":"Mid","kind":"room","rects":[[45,38,12,26]]},
+    {"name":"Mid Bottom","kind":"room","rects":[[40,64,22,10],[53,74,8,14]]},
+    {"name":"Mid Window","kind":"room","rects":[[57,42,10,5]]},
+    {"name":"Market","kind":"room","rects":[[67,42,12,14],[70,36,5,6]]},
+    {"name":"Garage","kind":"room","rects":[[62,67,12,8]]},
+    {"name":"B Short","kind":"room","rects":[[58,30,8,4]]},
+    {"name":"B Site","kind":"site","rects":[[66,18,26,7],[66,25,10,5],[81,25,11,5],[66,30,22,6]]},
+    {"name":"Back Site","kind":"room","rects":[[76,8,16,10]]},
+    {"name":"Connector","kind":"room","rects":[[64,6,12,6]]},
+    {"name":"B Main","kind":"room","rects":[[82,44,10,26],[83,36,5,8]]},
+    {"name":"B Lobby","kind":"room","rects":[[74,70,20,16],[68,86,12,6]]}
+  ]
+}

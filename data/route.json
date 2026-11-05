@@ -1,0 +1,43 @@
+{
+  "points": [[48,90],[30,90],[30,85],[30,74],[11,74],[11,58],[11,43],[22.5,43],[22.5,11],
+    [85,11],[85,19],[85,27],[85,35],[85,43],[85,51],[85,59],[85,67],[85,75],[85,83],
+    [78,83],[78,77],[78,72],[68,72],[51,72],[51,50],[51,27.5],[26,27.5]],
+  "corridor": [9, 18],
+  "stops": [
+    {"id":"lobby","room":"Attacker Spawn","point":0},
+    {"id":"position","room":"A Lobby","point":2},
+    {"id":"buy","room":"A Lobby","point":2},
+    {"id":"why-riot","room":"A Main","point":5},
+    {"id":"t-yanglab","room":"Back Site","point":9,"when":2023.83},
+    {"id":"t-jamnesia","room":"B Site","point":10,"when":2025.17},
+    {"id":"t-silvus","room":"B Site","point":11,"when":2025.42},
+    {"id":"t-golotl","room":"B Site","point":12,"when":2025.83},
+    {"id":"t-starborne","room":"B Main","point":13,"when":2026.17},
+    {"id":"t-autobattler","room":"B Main","point":14,"when":2026.17},
+    {"id":"t-uclahealth","room":"B Main","point":15,"when":2026.17},
+    {"id":"t-motorola","room":"B Main","point":16,"when":2026.42},
+    {"id":"t-budgeted-sim","room":"B Lobby","point":17,"when":2026.75},
+    {"id":"t-ucla","room":"B Lobby","point":18,"when":2027.42},
+    {"id":"projects","room":"B Lobby","point":20},
+    {"id":"p-readability-grid","room":"Garage","point":22},
+    {"id":"p-playtest-triage","room":"Mid Bottom","point":23},
+    {"id":"p-callout-drill","room":"Mid","point":24},
+    {"id":"close","room":"A Site","point":26}
+  ],
+  "years": [2024, 2025, 2026, 2027],
+  "labels": [
+    {"text":"Position Overview","at":[19,87],"stop":"position"},
+    {"text":"Why I love Riot","at":[28,58],"stop":"why-riot"},
+    {"text":"Past experiences","at":[80,4],"stop":"t-yanglab"},
+    {"text":"Riot-inspired Projects","at":[68,81],"stop":"projects"},
+    {"text":"Readability Grid","at":[68,63],"stop":"p-readability-grid"},
+    {"text":"Playtest Triage","at":[48,77],"stop":"p-playtest-triage"},
+    {"text":"Callout Drill","at":[58.5,53],"stop":"p-callout-drill"}
+  ],
+  "callouts": [
+    {"id":"position","text":"Position Overview","at":[19,87]},
+    {"id":"why-riot","text":"Why I love Riot","at":[28,58]},
+    {"id":"t-yanglab","text":"Past experiences","at":[80,4]},
+    {"id":"projects","text":"Riot-inspired Projects","at":[68,85]}
+  ]
+}
