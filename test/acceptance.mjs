@@ -323,12 +323,12 @@ for (const [name, viewport] of Object.entries(sizes)) {
 {
   const ctx = await browser.newContext({ viewport: sizes.desktop });
   await ctx.addInitScript(() => {
-    // Each file is told apart by its length: big click 3.7 s, hover 1.2 s, small click 0.48 s, glitch about 0.4 s
+    // Each file is told apart by its length: big click 3.7 s, message 1.07 s, hover 0.74 s, small click 0.48 s, glitch about 0.4 s
     window.played = [];
     const start = AudioBufferSourceNode.prototype.start;
     AudioBufferSourceNode.prototype.start = function (...a) {
-      const d = this.buffer.duration;
-      window.played.push(d > 3 ? 'big' : d > 1 ? 'hover' : Math.abs(d - 0.48) < 0.01 ? 'small' : 'glitch');
+      const d = this.buffer.duration, near = (x) => Math.abs(d - x) < 0.01;
+      window.played.push(d > 3 ? 'big' : near(1.07) ? 'message' : near(0.74) ? 'hover' : near(0.48) ? 'small' : 'glitch');
       return start.apply(this, a);
     };
   });
@@ -353,7 +353,7 @@ for (const [name, viewport] of Object.entries(sizes)) {
   const muted = (await count()) - n3;
   await page.reload(); await ready(page);
   const pressed = await page.getAttribute('.sound', 'aria-pressed');
-  check('sounds: silent before the first click, then START, glitch, hover, LOCK IN, chat; mute holds across a reload', before === '' && start === 'small' && glitch && hover === 'hover' && lock === 'big' && chat === 'hover' && muted === 0 && pressed === 'false', JSON.stringify({ before, start, glitch, hover, lock, chat, muted, pressed }));
+  check('sounds: silent before the first click, then START, glitch, hover, LOCK IN, chat; mute holds across a reload', before === '' && start === 'small' && glitch && hover === 'hover' && lock === 'big' && chat === 'message' && muted === 0 && pressed === 'false', JSON.stringify({ before, start, glitch, hover, lock, chat, muted, pressed }));
   await ctx.close();
 }
 

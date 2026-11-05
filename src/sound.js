@@ -1,4 +1,4 @@
-// Interface sounds from four short files: a tick on hover, clicks, a blip per HUD chat line, a glitch.
+// Interface sounds from five short files: a tick on hover, clicks, a message sound per HUD chat line, a glitch.
 // On by default; the speaker button mutes them, and the choice is remembered.
 (() => {
   const btn = document.querySelector('.sound');
@@ -9,10 +9,10 @@
   // Each sound: its file, its volume, where the sound starts in the file (skipping silence at the
   // front) and a delay in seconds (the glitch waits for its 0.15 s animation delay).
   const sounds = {
-    hover: ['ui-hover.mp3', 0.3, 0.02, 0],
+    hover: ['ui-hover.mp3', 0.75, 0.02, 0],
     click: ['small-click.mp3', 0.18, 0.24, 0],
     lock: ['big-click.mp3', 0.2, 0, 0],
-    blip: ['ui-hover.mp3', 0.15, 0.02, 0],
+    blip: ['received-message.mp3', 0.12, 0.12, 0],
     glitch: ['glitch-effect.m4a', 0.1, 0.05, 0.15],
   };
   // Decoded at page load, so the first click has its sound ready; an offline context needs no click.
