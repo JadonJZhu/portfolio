@@ -1,7 +1,7 @@
 // Interface sounds from five short files: a tick on hover, clicks, a message sound per HUD chat line, a glitch.
-// On by default; the speaker button mutes them, and the choice is remembered.
+// On by default; the speaker button or the lobby switch mutes them, and the choice is remembered.
 (() => {
-  const btn = document.querySelector('.sound');
+  const btns = document.querySelectorAll('.sound, .sound-switch'); // the top-bar speaker and the lobby switch
   let on = true;
   try { on = localStorage.getItem('sound') !== 'off'; } catch (e) { /* storage blocked: stay on */ }
   let ac = null; // made on the first click or key press, since browsers block audio before that
@@ -56,12 +56,13 @@
     play(el.matches('.lock .next') ? 'lock' : 'click'); // the speaker button runs first, so turning sound on clicks and turning it off is silent
   });
 
-  if (!btn) return;
-  btn.hidden = false;
-  btn.setAttribute('aria-pressed', on);
-  btn.addEventListener('click', () => {
-    on = !on;
+  btns.forEach((btn) => {
+    btn.hidden = false;
     btn.setAttribute('aria-pressed', on);
-    try { localStorage.setItem('sound', on ? 'on' : 'off'); } catch (e) { /* not remembered */ }
+    btn.addEventListener('click', () => {
+      on = !on;
+      btns.forEach((b) => b.setAttribute('aria-pressed', on));
+      try { localStorage.setItem('sound', on ? 'on' : 'off'); } catch (e) { /* not remembered */ }
+    });
   });
 })();
