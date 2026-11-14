@@ -60,7 +60,7 @@ b { font-weight: 600; }
 .player img { width: 100%; aspect-ratio: 1; object-fit: cover; }
 .tag { margin-top: 1.25rem; font: 800 1.75rem/1 var(--head); }
 .real { color: var(--muted); font-weight: 500; font-size: 1rem; }
-.screen-note { display: none; flex-basis: 100%; color: var(--muted); font-size: 0.875rem; } /* shown on phones only */
+.screen-note { display: none; margin-bottom: 1rem; padding: 0.625rem 0.875rem; background: var(--raised); border: 1px solid var(--red); border-left-width: 4px; color: var(--ink); font: 600 1.0625rem/1.3 var(--body); } /* shown on phones only */
 .maplabel { display: flex; align-items: center; gap: 0.75rem; font: 800 2rem/1 var(--head); }
 .name { font: 800 6rem/0.9 var(--head); }
 .dept { font-weight: 600; }
@@ -192,7 +192,6 @@ html.fly .slot::after { content: ""; position: absolute; left: 50%; top: 50%; wi
 html.fly .player { height: 30rem; }
 html.fly #lobby .go { position: absolute; left: 0; right: 0; bottom: 3rem; justify-content: center; }
 html.fly #lobby .next { min-width: 20rem; }
-html.fly #lobby .screen-note { text-align: center; }
 
 /* Agent select: the figure left of centre, the two blurbs paged on the right */
 html.fly #position { background: var(--ground); }
@@ -335,8 +334,9 @@ html.fly .email::after { content: ""; display: inline-block; width: 0.08em; heig
   .brand { font-size: 1.125rem; }
   html.fly .next { height: 3.25rem; min-width: 12.5rem; font-size: 1.5rem; }
 
-  html.fly .queue { left: 1rem; top: 1rem; width: auto; font-size: 1.75rem; }
-  html.fly .party { top: 7rem; gap: 0.75rem; }
+  html.fly #lobby .screen-note { position: absolute; left: 1rem; right: 1rem; top: 0.75rem; margin: 0; }
+  html.fly .queue { left: 1rem; top: 4.75rem; width: auto; font-size: 1.75rem; }
+  html.fly .party { top: 9rem; gap: 0.75rem; }
   html.fly .slot { width: 3.5rem; height: 20rem; }
   html.fly .slot:first-child, html.fly .slot:last-child { display: none; }
   html.fly .player { width: 12.25rem; height: 25rem; }
@@ -407,4 +407,11 @@ html.fly .email::after { content: ""; display: inline-block; width: 0.08em; heig
   .dhead h2 { font-size: 1.75rem; }
   .others { margin-top: 0.5rem; }
   .others a { height: 3rem; font-size: 1.5rem; }
+}
+/* Short phones: a smaller lobby card so it clears START */
+@media (max-aspect-ratio: 1/1) and (max-height: 760px) {
+  html.fly .party { top: 8.5rem; }
+  html.fly .player { width: 10rem; height: 18.5rem; }
+  html.fly .slot { height: 14rem; }
+  html.fly .tag { margin-top: 0.75rem; font-size: 1.375rem; }
 }
